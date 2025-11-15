@@ -1,0 +1,55 @@
+.categories {
+  padding: 3rem 0;
+  background: #fff;
+}
+
+.categories h3 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.category-btn {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.category-btn:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.category-btn.active {
+  background: #e91e63;
+  color: white;
+  border-color: #e91e63;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(233, 30, 99, 0.3);
+}
+
+/* Адаптивность для Categories */
+@media (max-width: 768px) {
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .categories h3 {
+    font-size: 2rem;
+  }
+}
