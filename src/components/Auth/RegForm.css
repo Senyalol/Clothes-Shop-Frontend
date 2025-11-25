@@ -5,7 +5,6 @@
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  margin: 0 auto;
 }
 
 .regform-container h2 {
@@ -37,7 +36,7 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #e91e63;
 }
 
 .form-group input.error {
@@ -58,17 +57,18 @@
 .submit-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #e91e63;
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
   margin-top: 10px;
 }
 
 .submit-btn:hover {
+  background: #c2185b;
   transform: translateY(-2px);
 }
 
@@ -79,12 +79,12 @@
 }
 
 .switch-btn {
-  color: #667eea;
+  color: #e91e63;
   cursor: pointer;
   font-weight: 500;
   text-decoration: underline;
 }
 
 .switch-btn:hover {
-  color: #764ba2;
+  color: #c2185b;
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './RegForm.css';
 
-function RegForm({ switchMode, setUser }) {
+function RegForm({ switchMode, setUser, onBack }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -72,72 +72,75 @@ function RegForm({ switchMode, setUser }) {
   };
 
   return (
-    <div className="regform-container">
-      <h2>Регистрация</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Имя пользователя:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className={errors.username ? 'error' : ''}
-            placeholder="Придумайте имя пользователя"
-          />
-          {errors.username && <span className="error-text">{errors.username}</span>}
-        </div>
+    <div className="auth-page">
+      <div className="regform-container">
+        <button className="back-btn" onClick={onBack}>← Назад в магазин</button>
+        <h2>Регистрация</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Имя пользователя:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className={errors.username ? 'error' : ''}
+              placeholder="Придумайте имя пользователя"
+            />
+            {errors.username && <span className="error-text">{errors.username}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={errors.email ? 'error' : ''}
+              placeholder="Введите ваш email"
+            />
+            {errors.email && <span className="error-text">{errors.email}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label>Пароль:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={errors.password ? 'error' : ''}
+              placeholder="Придумайте пароль"
+            />
+            {errors.password && <span className="error-text">{errors.password}</span>}
+          </div>
+          
+          <div className="form-group">
+            <label>Подтвердите пароль:</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={errors.confirmPassword ? 'error' : ''}
+              placeholder="Повторите пароль"
+            />
+            {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+          </div>
+          
+          <button type="submit" className="submit-btn">
+            Зарегистрироваться
+          </button>
+        </form>
         
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={errors.email ? 'error' : ''}
-            placeholder="Введите ваш email"
-          />
-          {errors.email && <span className="error-text">{errors.email}</span>}
-        </div>
-        
-        <div className="form-group">
-          <label>Пароль:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={errors.password ? 'error' : ''}
-            placeholder="Придумайте пароль"
-          />
-          {errors.password && <span className="error-text">{errors.password}</span>}
-        </div>
-        
-        <div className="form-group">
-          <label>Подтвердите пароль:</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={errors.confirmPassword ? 'error' : ''}
-            placeholder="Повторите пароль"
-          />
-          {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
-        </div>
-        
-        <button type="submit" className="submit-btn">
-          Зарегистрироваться
-        </button>
-      </form>
-      
-      <p className="switch-text">
-        Уже есть аккаунт?{' '}
-        <span className="switch-btn" onClick={switchMode}>
-          Войти
-        </span>
-      </p>
+        <p className="switch-text">
+          Уже есть аккаунт?{' '}
+          <span className="switch-btn" onClick={switchMode}>
+            Войти
+          </span>
+        </p>
+      </div>
     </div>
   );
 }

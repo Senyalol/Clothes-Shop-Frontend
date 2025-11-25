@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-const Header = ({ cartItems }) => {
+const Header = ({ cartItems, onAccountClick, user }) => {
   return (
     <header className="header">
       <div className="container">
@@ -27,7 +27,9 @@ const Header = ({ cartItems }) => {
           <button className="cart-btn">
             🛒 Корзина ({cartItems.length})
           </button>
-          <button className="account-btn">👤</button>
+          <button className="account-btn" onClick={onAccountClick}>
+            {user ? `👤 ${user.username || user.email.split('@')[0]}` : '👤'}
+          </button>
         </div>
       </div>
     </header>
