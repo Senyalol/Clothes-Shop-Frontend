@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onAddToCart }) => {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const navigate = useNavigate();
 
   const handleAddToCart = () => {
     onAddToCart({
@@ -13,11 +15,16 @@ const ProductCard = ({ product, onAddToCart }) => {
     });
   };
 
-  //<div className="image-placeholder">{product.image}</div>
+  const handleViewDetails = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   return (
     <div className="product-card">
       <div className="product-image">
-        <div className="image-placeholder"><img src = {product.image}/></div>
+        <div className="image-placeholder">
+          <img src={product.image} alt={product.name} />
+        </div>
         <button className="favorite-btn">❤️</button>
       </div>
       
@@ -49,12 +56,20 @@ const ProductCard = ({ product, onAddToCart }) => {
           </select>
         </div>
         
-        <button 
-          className="add-to-cart-btn"
-          onClick={handleAddToCart}
-        >
-          В корзину
-        </button>
+        <div className="card-actions">
+          <button 
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+          >
+            В корзину
+          </button>
+          <button 
+            className="view-details-btn"
+            onClick={handleViewDetails}
+          >
+            Подробнее
+          </button>
+        </div>
       </div>
     </div>
   );

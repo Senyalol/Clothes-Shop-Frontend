@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Categories from './components/Categories';
 import ProductGrid from './components/ProductGrid';
+import ProductDetail from './components/ProductDetail';
 import Newsletter from './components/Newsletter';
 import Footer from './components/Footer';
 import Auth from './components/Auth/Auth';
@@ -19,15 +21,25 @@ function App() {
 
   const addToCart = (product) => {
     setCartItems(prev => {
-      const existingItem = prev.find(item => item.id === product.id);
+      const existingItem = prev.find(item => 
+        item.id === product.id && 
+        item.selectedSize === product.selectedSize && 
+        item.selectedColor === product.selectedColor
+      );
+      
       if (existingItem) {
         return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          item.id === product.id && 
+          item.selectedSize === product.selectedSize && 
+          item.selectedColor === product.selectedColor
+            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
             : item
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { 
+        ...product, 
+        quantity: product.quantity || 1 
+      }];
     });
   };
 
@@ -68,6 +80,29 @@ function App() {
     setCurrentView('main');
   };
 
+  // Главная страница с товарами
+  const MainPage = () => (
+    <>
+      <Header 
+        cartItems={cartItems} 
+        onAccountClick={handleAccountClick}
+        onCartClick={handleCartClick}
+        user={user}
+      />
+      <Hero />
+      <Categories 
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
+      <ProductGrid 
+        selectedCategory={selectedCategory}
+        onAddToCart={addToCart}
+      />
+      <Newsletter />
+      <Footer />
+    </>
+  );
+
   if (currentView === 'auth') {
     return (
       <div className="App auth-view">
@@ -93,33 +128,36 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <Header 
-        cartItems={cartItems} 
-        onAccountClick={handleAccountClick}
-        onCartClick={handleCartClick}
-        user={user}
-      />
-      <Hero />
-      <Categories 
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
-      <ProductGrid 
-        selectedCategory={selectedCategory}
-        onAddToCart={addToCart}
-      />
-      <Newsletter />
-      <Footer />
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<MainPage />} />
+          <Route 
+            path="/product/:productId" 
+            element={
+              <>
+                <Header 
+                  cartItems={cartItems} 
+                  onAccountClick={handleAccountClick}
+                  onCartClick={handleCartClick}
+                  user={user}
+                />
+                <ProductDetail onAddToCart={addToCart} />
+                <Footer />
+              </>
+            } 
+          />
+        </Routes>
 
-      {isCartOpen && (
-        <Cart 
-          cartItems={cartItems}
-          onUpdateCart={updateCart}
-          onClose={handleCloseCart}
-        />
-      )}
-    </div>
+        {isCartOpen && (
+          <Cart 
+            cartItems={cartItems}
+            onUpdateCart={updateCart}
+            onClose={handleCloseCart}
+          />
+        )}
+      </div>
+    </Router>
   );
 }
 
