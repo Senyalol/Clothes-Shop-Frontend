@@ -73,7 +73,7 @@ const ProductGrid = ({ selectedCategory, onAddToCart }) => {
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={onAddToCart}
+              onAddToCart={() => onAddToCart(product)}
             />
           ))}
         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-const Header = ({ cartItems, onAccountClick, user }) => {
+const Header = ({ cartItems, onAccountClick, user, onCartClick }) => {
   return (
     <header className="header">
       <div className="container">
@@ -24,7 +24,7 @@ const Header = ({ cartItems, onAccountClick, user }) => {
             <input type="text" placeholder="Поиск..." />
             <button>🔍</button>
           </div>
-          <button className="cart-btn">
+          <button className="cart-btn" onClick={onCartClick}>
             🛒 Корзина ({cartItems.length})
           </button>
           <button className="account-btn" onClick={onAccountClick}>
