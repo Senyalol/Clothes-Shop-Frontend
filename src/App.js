@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
@@ -18,6 +18,24 @@ function App() {
   const [currentView, setCurrentView] = useState('main');
   const [user, setUser] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  // Проверяем localStorage при загрузке приложения
+  useEffect(() => {
+    const savedToken = localStorage.getItem('authToken');
+    const savedUser = localStorage.getItem('user');
+    
+    if (savedToken && savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        console.log('Пользователь восстановлен из localStorage');
+      } catch (error) {
+        console.error('Ошибка при чтении пользователя из localStorage:', error);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
 
   const addToCart = (product) => {
     setCartItems(prev => {
@@ -49,7 +67,10 @@ function App() {
 
   const handleAccountClick = () => {
     if (user) {
+      // Выход из аккаунта
       setUser(null);
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
     } else {
       setCurrentView('auth');
     }
@@ -73,7 +94,7 @@ function App() {
 
   const handleAuthSuccess = (userData) => {
     setUser(userData);
-    setCurrentView('main');
+    setCurrentView('main'); // Переключаемся на главную страницу
   };
 
   const handleBackToMain = () => {

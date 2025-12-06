@@ -155,6 +155,14 @@ function RegForm({ switchMode, setUser, onBack }) {
         secretKeyf: ''
       });
       setErrors({});
+      
+      alert("Вы успешно зарегистрировались!");
+
+// После успешной регистрации автоматически переключаемся на форму входа через 2 секунды
+      setTimeout(() => {
+        switchMode(); // Переключиться на форму входа
+      }, 1);
+    
 
     }
     catch(error){

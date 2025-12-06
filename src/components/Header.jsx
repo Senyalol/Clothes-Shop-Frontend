@@ -2,6 +2,24 @@ import React from 'react';
 import './Header.css';
 
 const Header = ({ cartItems, onAccountClick, user, onCartClick }) => {
+  // Получаем отображаемое имя пользователя безопасным способом
+  const getUserDisplayName = () => {
+    if (!user) return 'Войти';
+    
+    if (user.username) return user.username;
+    if (user.login) return user.login;
+    if (user.email) {
+      // Безопасное использование split
+      const emailParts = user.email ? user.email.split('@') : [];
+      return emailParts[0] || user.email;
+    }
+    if (user.firstName) return user.firstName;
+    
+    return 'Пользователь';
+  };
+
+  const userDisplayName = getUserDisplayName();
+
   return (
     <header className="header">
       <div className="container">
@@ -28,7 +46,7 @@ const Header = ({ cartItems, onAccountClick, user, onCartClick }) => {
             🛒 Корзина ({cartItems.length})
           </button>
           <button className="account-btn" onClick={onAccountClick}>
-            {user ? `👤 ${user.username || user.email.split('@')[0]}` : '👤'}
+            {user ? `👤 ${userDisplayName}` : '👤 Войти'}
           </button>
         </div>
       </div>
