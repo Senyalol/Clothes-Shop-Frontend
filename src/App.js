@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Categories from './components/Categories';
-import ProductGrid from './components/ProductGrid';
+import Header from './components/MainPage/Header';
+import Hero from './components/MainPage/Hero';
+import Categories from './components/MainPage/Categories';
+import ProductGrid from './components/MainPage/ProductGrid';
 import ProductDetail from './components/ProductDetail';
-import Newsletter from './components/Newsletter';
-import Footer from './components/Footer';
+import Newsletter from './components/MainPage/Newsletter';
+import Footer from './components/MainPage/Footer';
 import Auth from './components/Auth/Auth';
 import RegForm from './components/Auth/RegForm';
 import Cart from './components/Cart';
