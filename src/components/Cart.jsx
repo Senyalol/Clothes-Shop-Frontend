@@ -1,17 +1,18 @@
 import React from 'react';
+import { useCart } from './context/CartContext';
 import './Cart.css';
 
-const Cart = ({ cartItems, onUpdateCart, onClose }) => {
-  const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+const Cart = ({ onClose }) => {
+  const { cartItems, updateCart, clearCart, cartTotal } = useCart();
 
   const increaseQuantity = (id) => {
-    onUpdateCart(cartItems.map(item => 
+    updateCart(cartItems.map(item => 
       item.id === id ? { ...item, quantity: item.quantity + 1 } : item
     ));
   };
 
   const decreaseQuantity = (id) => {
-    onUpdateCart(cartItems.map(item => 
+    updateCart(cartItems.map(item => 
       item.id === id && item.quantity > 1 
         ? { ...item, quantity: item.quantity - 1 } 
         : item
@@ -19,11 +20,11 @@ const Cart = ({ cartItems, onUpdateCart, onClose }) => {
   };
 
   const removeItem = (id) => {
-    onUpdateCart(cartItems.filter(item => item.id !== id));
+    updateCart(cartItems.filter(item => item.id !== id));
   };
 
-  const clearCart = () => {
-    onUpdateCart([]);
+  const handleClearCart = () => {
+    clearCart();
   };
 
   return (
@@ -45,10 +46,12 @@ const Cart = ({ cartItems, onUpdateCart, onClose }) => {
           <>
             <div className="cart-items">
               {cartItems.map(item => (
-                <div key={item.id} className="cart-item">
+                <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="cart-item">
                   <img src={item.image} alt={item.name} className="item-image" />
                   <div className="item-details">
                     <h4>{item.name}</h4>
+                    <p>Размер: {item.selectedSize}</p>
+                    <p>Цвет: {item.selectedColor}</p>
                     <p className="item-price">${item.price}</p>
                     <div className="quantity-controls">
                       <button onClick={() => decreaseQuantity(item.id)}>-</button>
@@ -72,10 +75,10 @@ const Cart = ({ cartItems, onUpdateCart, onClose }) => {
             <div className="cart-footer">
               <div className="cart-total">
                 <span>Итого:</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>${cartTotal.toFixed(2)}</span>
               </div>
               <div className="cart-actions">
-                <button className="clear-cart" onClick={clearCart}>
+                <button className="clear-cart" onClick={handleClearCart}>
                   Очистить корзину
                 </button>
                 <button className="checkout-btn">

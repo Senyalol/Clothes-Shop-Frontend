@@ -1,100 +1,43 @@
 import React, { useState } from 'react';
 import './Auth.css';
 
-function Auth({ switchMode, setUser, onBack }) {
-  
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  
+function Auth({ switchMode, onBack, onSubmit }) {
   const [formData, setFormData] = useState({
-    loginf: '',
-    passwordf: ''
+    login: '',
+    password: ''
   });
-
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-     const { name, value } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
     });
-
-    if (name === 'loginf') setLogin(value);
-    if (name === 'passwordf') setPassword(value);
-    setError(''); // Очищаем ошибку при изменении поля
+    setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
-    if (!login || !password) {
+    if (!formData.login || !formData.password) {
       setError('Пожалуйста, заполните все поля');
       return;
     }
 
-    const authData = {
-      login,
-      password
-    };
-
     setLoading(true);
+    const result = await onSubmit(formData);
+    setLoading(false);
 
-    try {
-      const response = await fetch('http://localhost:8080/api/users/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(authData),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text(); 
-        console.error('Error response:', errorText);
-        throw new Error(`Ошибка: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('Данные пользователя', data);
-
-      // Сохраняем токен в localStorage
-      if (data.token) {
-        localStorage.setItem('authToken', data.token);
-        console.log('Токен сохранен в localStorage');
-      }
-
-      // Сохраняем данные пользователя в localStorage
-      if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-      }
-
-      // Вызываем setUser из App.js для обновления состояния
-      setUser(data.user || { login: login });
-
-      // Очищаем форму
-      setLogin('');
-      setPassword('');
+    if (!result.success) {
+      setError(result.error || 'Ошибка аутентификации');
+      // Сброс формы в случае ошибки
       setFormData({
-        loginf: '',
-        passwordf: ''
+        login: '',
+        password: ''
       });
-
-    } catch (error) {
-      console.log(error.message);
-      setError(error.message || 'Ошибка аутентификации');
-      
-      // Очищаем форму в случае ошибки
-      setLogin('');
-      setPassword('');
-      setFormData({
-        loginf: '',
-        passwordf: ''
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -115,8 +58,8 @@ function Auth({ switchMode, setUser, onBack }) {
             <label>Логин:</label>
             <input
               type="text"
-              name="loginf"
-              value={formData.loginf}
+              name="login"
+              value={formData.login}
               onChange={handleChange}
               required
               disabled={loading}
@@ -128,8 +71,8 @@ function Auth({ switchMode, setUser, onBack }) {
             <label>Пароль:</label>
             <input
               type="password"
-              name="passwordf"
-              value={formData.passwordf}
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               required
               disabled={loading}

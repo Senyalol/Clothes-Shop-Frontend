@@ -1,40 +1,26 @@
 import React, { useState } from 'react';
 import './RegForm.css';
 
-function RegForm({ switchMode, setUser, onBack }) {
-
-  const [login , setLogin] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [secretKey, setSecretKey] = useState('');
-  const [success, setSuccess] = useState('');
-  const [showSecretKey, setShowSecretKey] = useState(false);
-
+function RegForm({ switchMode, onBack, onSubmit }) {
   const [formData, setFormData] = useState({
-    loginf: '',
-    passwordf: '',
-    confirmPasswordf: '',
-    firstNamef: '',
-    lastNamef: '',
-    secretKeyf: ''
+    login: '',
+    password: '',
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    secretKey: 'sos'
   });
-
+  
+  const [showSecretKey, setShowSecretKey] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
     if (type === 'checkbox') {
       setShowSecretKey(checked);
-      
       if (!checked) {
-        setSecretKey('');
-        setFormData({
-          ...formData,
-          secretKeyf: ''
-        });
+        setFormData(prev => ({ ...prev, secretKey: 'sos' }));
       }
     } else {
       setFormData({
@@ -42,49 +28,41 @@ function RegForm({ switchMode, setUser, onBack }) {
         [name]: value
       });
       
-      // Обновляем соответствующие отдельные состояния
-      if (name === 'loginf') setLogin(value);
-      if (name === 'passwordf') setPassword(value);
-      if (name === 'confirmPasswordf') setConfirmPassword(value);
-      if (name === 'firstNamef') setFirstName(value);
-      if (name === 'lastNamef') setLastName(value);
-      if (name === 'secretKeyf') setSecretKey(value);
-    }
-    
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: ''
-      });
+      if (errors[name]) {
+        setErrors({
+          ...errors,
+          [name]: ''
+        });
+      }
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!login.trim()) {
+    if (!formData.login.trim()) {
       newErrors.login = 'Имя пользователя обязательно';
-    } else if (login.length < 3) {
+    } else if (formData.login.length < 3) {
       newErrors.login = 'Имя должно быть не менее 3 символов';
     }
 
-    if (!password) {
+    if (!formData.password) {
       newErrors.password = 'Пароль обязателен';
-    } else if (password.length < 6) {
+    } else if (formData.password.length < 6) {
       newErrors.password = 'Пароль должен быть не менее 6 символов';
     }
 
-    if (!confirmPassword) {
+    if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Подтверждение пароля обязательно';
-    } else if (password !== confirmPassword) {
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Пароли не совпадают';
     }
 
-    if (!firstName.trim()) {
+    if (!formData.firstName.trim()) {
       newErrors.firstName = 'Имя обязательно';
     }
 
-    if (!lastName.trim()) {
+    if (!formData.lastName.trim()) {
       newErrors.lastName = 'Фамилия обязательна';
     }
 
@@ -100,90 +78,41 @@ function RegForm({ switchMode, setUser, onBack }) {
       return;
     }
 
-    if(!login || !password || !firstName || !lastName){
-      setErrors({general: 'Пожалуйста, заполните все поля.'});
-      return;
-    }
-
-    if(password !== confirmPassword){
-      setErrors({general: 'Пароли не совпадают.'});
-      return;
-    }
-
     const userData = {
-      login,
-      password,
-      firstName,
-      lastName,
+      login: formData.login,
+      password: formData.password,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       balance: 0.0,
-      secretKey: showSecretKey ? secretKey : "sos"
+      secretKey: showSecretKey ? formData.secretKey : "sos"
     };
 
-    try{
-      const response = await fetch('http://localhost:8080/api/users/reg',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(userData),
-        }
-      );
-      
-      if(!response.ok){
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Ошибка: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('Данные пользователя:', data);
-
-      setLogin('');
-      setPassword('');
-      setConfirmPassword('');
-      setFirstName('');
-      setLastName('');
-      setSecretKey('');
-      setShowSecretKey(false);
-      setFormData({
-        loginf: '',
-        passwordf: '',
-        confirmPasswordf: '',
-        firstNamef: '',
-        lastNamef: '',
-        secretKeyf: ''
-      });
-      setErrors({});
-      
-      alert("Вы успешно зарегистрировались!");
-
-// После успешной регистрации автоматически переключаемся на форму входа через 2 секунды
-      setTimeout(() => {
-        switchMode(); // Переключиться на форму входа
-      }, 1);
+    const result = await onSubmit(userData);
     
-
-    }
-    catch(error){
-      // setErrors({general: error.message});
-      console.log(error.message);
-      // Сброс формы в случае ошибки
-      setLogin('');
-      setPassword('');
-      setConfirmPassword('');
-      setFirstName('');
-      setLastName('');
-      setSecretKey('');
-      setShowSecretKey(false);
+    if (result.success) {
+      // Сброс формы после успешной регистрации
       setFormData({
-        loginf: '',
-        passwordf: '',
-        confirmPasswordf: '',
-        firstNamef: '',
-        lastNamef: '',
-        secretKeyf: ''
+        login: '',
+        password: '',
+        confirmPassword: '',
+        firstName: '',
+        lastName: '',
+        secretKey: 'sos'
       });
+      setShowSecretKey(false);
+      setErrors({});
+    } else {
+      setErrors({ general: result.error });
+      // Сброс формы в случае ошибки
+      setFormData({
+        login: '',
+        password: '',
+        confirmPassword: '',
+        firstName: '',
+        lastName: '',
+        secretKey: 'sos'
+      });
+      setShowSecretKey(false);
     }
   };
 
@@ -199,19 +128,13 @@ function RegForm({ switchMode, setUser, onBack }) {
           </div>
         )}
         
-        {success && (
-          <div className="success-message">
-            {success}
-          </div>
-        )}
-        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Логин:</label>
             <input
               type="text"
-              name="loginf"
-              value={formData.loginf}
+              name="login"
+              value={formData.login}
               onChange={handleChange}
               className={errors.login ? 'error' : ''}
               placeholder="Придумайте login"
@@ -223,8 +146,8 @@ function RegForm({ switchMode, setUser, onBack }) {
             <label>Имя:</label>
             <input
               type="text"
-              name="firstNamef"
-              value={formData.firstNamef}
+              name="firstName"
+              value={formData.firstName}
               onChange={handleChange}
               className={errors.firstName ? 'error' : ''}
               placeholder="Введите ваше имя"
@@ -236,8 +159,8 @@ function RegForm({ switchMode, setUser, onBack }) {
             <label>Фамилия:</label>
             <input
               type="text"
-              name="lastNamef"
-              value={formData.lastNamef}
+              name="lastName"
+              value={formData.lastName}
               onChange={handleChange}
               className={errors.lastName ? 'error' : ''}
               placeholder="Введите вашу фамилию"
@@ -249,8 +172,8 @@ function RegForm({ switchMode, setUser, onBack }) {
             <label>Пароль:</label>
             <input
               type="password"
-              name="passwordf"
-              value={formData.passwordf}
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               className={errors.password ? 'error' : ''}
               placeholder="Придумайте пароль"
@@ -262,8 +185,8 @@ function RegForm({ switchMode, setUser, onBack }) {
             <label>Подтвердите пароль:</label>
             <input
               type="password"
-              name="confirmPasswordf"
-              value={formData.confirmPasswordf}
+              name="confirmPassword"
+              value={formData.confirmPassword}
               onChange={handleChange}
               className={errors.confirmPassword ? 'error' : ''}
               placeholder="Повторите пароль"
@@ -287,8 +210,8 @@ function RegForm({ switchMode, setUser, onBack }) {
               <label>Секретный ключ:</label>
               <input
                 type="text"
-                name="secretKeyf"
-                value={formData.secretKeyf}
+                name="secretKey"
+                value={formData.secretKey}
                 onChange={handleChange}
                 placeholder="Введите секретный ключ"
               />

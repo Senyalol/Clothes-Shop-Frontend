@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from './context/CartContext'; // Изменен импорт
 import './ProductCard.css';
 
-const ProductCard = ({ product, onAddToCart }) => {
+const ProductCard = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    onAddToCart({
+    addToCart({
       ...product,
       selectedSize,
       selectedColor
-    });
+    }, 1);
   };
 
   const handleViewDetails = () => {
