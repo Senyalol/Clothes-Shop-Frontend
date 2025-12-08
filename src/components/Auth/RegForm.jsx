@@ -89,8 +89,27 @@ function RegForm({ switchMode, onBack, onSubmit }) {
 
     const result = await onSubmit(userData);
     
-    if (result.success) {
-      // Сброс формы после успешной регистрации
+    try{
+
+      const response = await fetch('http://localhost:8080/api/users/reg',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
+        }
+      );
+
+       if (!response.ok) {
+        const errorText = await response.text(); // Get the error response as text
+        console.error('Error response:', errorText); // Log the error response
+        throw new Error(`Ошибка: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      alert("Регистрация прошла успешно !");
+
       setFormData({
         login: '',
         password: '',
@@ -101,8 +120,9 @@ function RegForm({ switchMode, onBack, onSubmit }) {
       });
       setShowSecretKey(false);
       setErrors({});
-    } else {
-      setErrors({ general: result.error });
+    }
+    catch(error){
+      console.log(error.message);
       // Сброс формы в случае ошибки
       setFormData({
         login: '',
@@ -114,6 +134,7 @@ function RegForm({ switchMode, onBack, onSubmit }) {
       });
       setShowSecretKey(false);
     }
+
   };
 
   return (
